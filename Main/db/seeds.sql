@@ -1,15 +1,27 @@
-INSERT INTO movies (movie_name)
-VALUES ("Lion King"),
-       ("The Godfather"),
-       ("West Side Story"),
-       ("Parasite"),
-       ("The Wizard of Oz");
+INSERT INTO role (department_name)
+VALUES ("Head of House"),
+       ("Slayer"),
+       ("Demon"),
+       ("Ranked Demon");
 
-INSERT INTO reviews (movie_id, review)
-VALUES (1, "Zazu is underrated. Give that hornbill a sequel!"),
-       (2, "I'm gonna make him an offer you can't refuse, watch this movie"),
-       (1, "Scar is the lion everyone loves to hate"),
-       (3, "Ten years of ballet and three years of tap to join a gang in this neighborhood"),
-       (5, "The tin man gave a metallic, hollow performance"),
-       (1, "Hakuna matata"),
-       (5, "Those flying monkeys are nightmare fuel!");
+INSERT INTO roles (title, salary, department_id)
+VALUES ("Demon Corps Leader", 500000, 1),
+       ("Demon King", 1000000, 1),
+       ("Hashira", 120000, 2),
+       ("Kanoe", 40000, 2),
+       ("Kanoto", 30000, 2),
+       ("Slayer Backup", 25000, 3),
+       ("Doctor", 55000, 3),
+       ("Standard Demon", 15000, 3),
+       ("Upper Rank", 130000, 4),
+       ("Lower Rank", 50000, 4);
+
+INSERT INTO employee  (first_name, last_name, roles_id, manager_id)
+VALUES ("Kagaya", "Ubuyashiki", 1, Null),
+       ("Muzan", "Kibutsuji", 1, Null),
+       ("Giyu", "Tomioka", 3, 1),
+       ("Tanjiro", "Kamado", 4, 3),
+       ("Nezuko", "Kamado", 6, 4),
+       ("Susamaru", "Temari", 8, 2),
+       ("Akaza", "San", 9, 2),
+       ("Rui", "Shi", 10, 2);
