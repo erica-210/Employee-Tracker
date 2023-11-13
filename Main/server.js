@@ -24,12 +24,12 @@ const db = mysql.createConnection(
 );
 
 // Query database
-db.query("SELECT * FROM movie_name", function (err, result) {
+db.query("SELECT * FROM department_name", function (err, result) {
   console.log(result);
 });
 
-app.get("/api/movies", (req, res) => {
-  db.query("SELECT id, movie_name FROM  movies;", (err, results) => {
+app.get("/api/department", (req, res) => {
+  db.query("SELECT id, department_name FROM department;", (err, results) => {
     if (err) {
       res.status(500).json({ message: "Sorry, something went wrong." });
     }
@@ -37,10 +37,10 @@ app.get("/api/movies", (req, res) => {
   });
 });
 
-app.post("/api/movies", (req, res) => {
+app.post("/api/department", (req, res) => {
   db.query(
-    "INSERT INTO movies (movie_name) VALUES (?);",
-    req.body.movie_name,
+    "INSERT INTO department (department_name) VALUES (?);",
+    req.body.department_name,
     (err, result) => {
       if (err) {
         res.status(400).json({ message: "You might have sent invalid data." });
@@ -50,9 +50,9 @@ app.post("/api/movies", (req, res) => {
   );
 });
 
-app.get("/api/movies/:id/reviews", (req, res) => {
+app.get("/api/department/:id/role", (req, res) => {
   db.query(
-    "SELECT id, review FROM reviews WHERE movie_id = ?;",
+    "SELECT id, salary FROM role WHERE department_id = ?;",
     req.params.id,
     (err, results) => {
       if (err) {
@@ -63,10 +63,10 @@ app.get("/api/movies/:id/reviews", (req, res) => {
   );
 });
 
-app.post("/api/movies/:id/reviews", (req, res) => {
+app.post("/api/department/:id/role", (req, res) => {
   db.query(
-    "INSERT INTO reviews (movie_id, review) VALUES (?, ?);",
-    [req.params.id, req.body.review],
+    "INSERT INTO role (department_id, department_name AS dn, title, salary) VALUES (?, ?);",
+    [req.params.id, req.body.dn, req.body.title, req.body.salary],
     (err, result) => {
       if (err) {
         res.status(400).json({ message: "You might have sent invalid data." });
@@ -76,18 +76,9 @@ app.post("/api/movies/:id/reviews", (req, res) => {
   );
 });
 
-app.delete("/api/movies/:id", (req, res) => {
-  db.query("DELETE FROM movies WHERE id = ?;", req.params.id, (err, result) => {
-    if (err) {
-      res.status(500).json({ message: "Sorry, something went wrong." });
-    }
-    res.status(204).json(result);
-  });
-});
-
-app.get("/api/movie/reviews", (req, res) => {
+app.get("/api/department/role", (req, res) => {
   db.query(
-    "SELECT m.id, m.movie_name, r.id AS review_id, r.review FROM movies AS M INNER JOIN reviews as r ON m.id = r.movie_id;",
+    "SELECT d.id, d.department_name, r.id AS role_id, r.role FROM department AS d INNER JOIN role as r ON d.id = r.department_id;",
     (err, results) => {
       if (err) {
         res.status(500).json({ message: "Sorry, something went wrong." });
@@ -97,20 +88,35 @@ app.get("/api/movie/reviews", (req, res) => {
   );
 });
 
-app.put("/api/reviews/:id", (req, res) => {
-  if (!req.body.review) {
+app.put("/api/role/:id", (req, res) => {
+  if (!req.body.salary) {
     res
       .status(400)
-      .json({ message: "Please provide a review property in your JSON body.;" });
+      .json({
+        message: "Please provide a review property in your JSON body.;",
+      });
   }
   db.query(
-    "UPDATE reviews SET review = ? WHERE id = ?;",
-    [req.params.review, req.body.id],
+    "UPDATE role SET salary = ? WHERE id = ?;",
+    [req.params.salary, req.body.id],
     (err, result) => {
       if (err) {
         res.status(400).json({ message: "You might have sent invalid data." });
       }
       res.status(200).json(result);
+    }
+  );
+});
+
+app.delete("/api/department/:id", (req, res) => {
+  db.query(
+    "DELETE FROM department WHERE id = ?;",
+    req.params.id,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({ message: "Sorry, something went wrong." });
+      }
+      res.status(204).json(result);
     }
   );
 });
