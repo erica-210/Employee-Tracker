@@ -33,6 +33,7 @@ Pages used as refrences:
 
     Joins: https://www.databasestar.com/multiple-inner-joins/#:~:text=Using%20an%20INNER%20JOIN%20with,INNER%20JOIN%20table2%20ON%20table1.
     
+    self Joins: https://learnsql.com/blog/what-is-self-join-sql/
 
 ## License
 
