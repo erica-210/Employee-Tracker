@@ -19,7 +19,7 @@ const db = mysql.createConnection(
 db.connect((err) => {
   if (err) throw err;
   console.log("Connected to the database!");
- userInput();
+  userInput();
 });
 
 // Creating an array of questions for user input
@@ -31,7 +31,7 @@ const userInput = () => {
           type: "list",
           message: "How would you like to proceed?",
           name: "actions",
-          Choices: [
+          choices: [
             "view all departments",
             "view all roles",
             "view all employees",
@@ -79,7 +79,7 @@ const userInput = () => {
 
 function viewAllDepartments() {
   const query = "SELECT * FROM departments";
-  connection.query(query, (err, res) => {
+  db.query(query, (err, res) => {
     if (err) throw err;
     console.log("Viewing All Departments: ");
     console.table(res);
@@ -89,7 +89,7 @@ function viewAllDepartments() {
 
 function viewAllRoles() {
   const query = "SELECT * FROM roles";
-  connection.query(query, (err, res) => {
+  db.query(query, (err, res) => {
     if (err) throw err;
     console.log("Viewing All Roles: ");
     console.table(res);
@@ -99,7 +99,7 @@ function viewAllRoles() {
 
 function viewAllEmployees() {
   const query = "SELECT * FROM employee";
-  connection.query(query, (err, res) => {
+  db.query(query, (err, res) => {
     if (err) throw err;
     console.log("Viewing All Employees: ");
     console.table(res);
@@ -117,7 +117,7 @@ function addADepartment() {
     .then((answer) => {
       console.log(answer.name);
       const query = `INSERT INTO departments (department_name) VALUES ("${answer.name}")`;
-      connection.query(query, (err, res) => {
+      db.query(query, [answer.name], (err, res) => {
         if (err) throw err;
         console.log(`Added department ${answer.name} to the database!`);
         console.table(res);
@@ -129,7 +129,7 @@ function addADepartment() {
 
 function addARole() {
   const query = "SELECT * FROM departments";
-  connection.query(query, (err, res) => {
+  db.query(query, (err, res) => {
     if (err) throw err;
     inquirer
       .prompt([
@@ -152,10 +152,10 @@ function addARole() {
       ])
       .then((answers) => {
         const department = res.find(
-          (department) => department.name === answers.department
+          (department) => department.department_name === answers.department_name
         );
         const query = "INSERT INTO roles SET ?";
-        connection.query(
+        db.query(
           query,
           {
             title: answers.title,
@@ -185,7 +185,7 @@ function addAnEmployee() {
 
     db.query(`SELECT * FROM employee`, function (err, res) {
       for (let i = 0; i < results.length; i++) {
-        let employeeName = `${results[i].first_name} ${res[i].last_name}`;
+        let employeeName = `${res[i].first_name} ${res[i].last_name}`;
         newEmployee.push(employeeName);
       }
       return inquirer
@@ -217,7 +217,7 @@ function addAnEmployee() {
           let roleName = data.role;
           let first_name = data.first_name;
           let last_name = data.last_name;
-          let role_id = "";
+          let roles_id = "";
           let manager = "";
           // populates role id
           db.query(
@@ -292,38 +292,44 @@ function addAnEmployee() {
 function updateAnEmployeeRole() {
   const queryEmployees = "SELECT * FROM employee";
   const queryRoles = "SELECT * FROM roles";
-  connection.query(queryEmployees, (err, resEmployees) => {
+  db.query(queryEmployees, (err, resEmployees) => {
     if (err) throw err;
-    connection.query(queryRoles, (err, resRoles) => {
+    db.query(queryRoles, (err, resRoles) => {
       if (err) throw err;
       inquirer
         .prompt([
           {
             type: "list",
-            name: "employee",
+            name: "employees",
             message: "Which employees role do you want to update?",
             choices: () => {
               var array = [];
               for (var i = 0; i < res.length; i++) {
-                array.push(res[i].last_name);
+                array.push(resEmployees[i].last_name);
               }
-              var newEmployee = [...new Set(array)];
-              return newEmployee;
+
+              var newEmployees = [...new Set(array)];
+              return newEmployees;
             },
+
+            type: "list",
+            name: "roles",
+            message: "Select the new role:",
+            choices: resRoles.map((role) => role.title),
           },
         ])
         .then((answers) => {
-          const employee = resEmployees.find(
-            (employee) =>
-              `${employee.first_name} ${employee.last_name}` ===
+          const employees = resEmployees.find(
+            (employees) =>
+              `${employees.first_name} ${employees.last_name}` ===
               answers.employee
           );
-          const role = resRoles.find((role) => role.title === answers.role);
+          const roles = resRoles.find((roles) => roles.title === answers.roles);
           const query = "UPDATE employee SET roles_id = ? WHERE id = ?";
-          connection.query(query, [role.id, employee.id], (err, res) => {
+          db.query(query, [roles.id, employees.id], (err, res) => {
             if (err) throw err;
             console.log(
-              `Updated ${employee.first_name} ${employee.last_name}'s role to ${role.title} in the database!`
+              `Updated ${employees.first_name} ${employees.last_name}'s roles to ${roles.title} in the database!`
             );
 
             userInput();

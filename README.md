@@ -1,5 +1,6 @@
 # Employee-Tracker
 
+A company table using mySQL to keep track of employees, roles, salary, etc. and being able to update as needed. 
 
 ## User Story
 
@@ -31,10 +32,6 @@ Pages used as refrences:
     Foreign Keys: https://dba.stackexchange.com/questions/146179/adding-multiple-foreign-keys-to-single-table
 
     Joins: https://www.databasestar.com/multiple-inner-joins/#:~:text=Using%20an%20INNER%20JOIN%20with,INNER%20JOIN%20table2%20ON%20table1.
-    
-
-Tutoring:
-
     
 
 ## License
